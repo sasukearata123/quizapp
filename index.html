@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Quiz Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin: 20px 0;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ffcc00;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .upload-area {
+            border: 3px dashed #4a9bff;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 30px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(25, 40, 100, 0.3);
+        }
+        
+        .upload-area:hover {
+            background: rgba(25, 40, 100, 0.5);
+            border-color: #ffcc00;
+        }
+        
+        .upload-area i {
+            font-size: 60px;
+            color: #4a9bff;
+            margin-bottom: 20px;
+        }
+        
+        .upload-area h2 {
+            margin-bottom: 15px;
+        }
+        
+        .upload-area p {
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #ff8c00, #ffcc00);
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(45deg, #ffcc00, #ff8c00);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #4a9bff, #1e90ff);
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #1e90ff, #4a9bff);
+        }
+        
+        .quiz-info {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .question-container {
+            background: rgba(30, 30, 60, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .question-number {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .option {
+            background: rgba(50, 50, 80, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            background: rgba(70, 70, 100, 0.9);
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            background: rgba(25, 100, 150, 0.9);
+            border-left: 5px solid #ffcc00;
+        }
+        
+        .option.correct {
+            background: rgba(0, 150, 0, 0.7);
+        }
+        
+        .option.incorrect {
+            background: rgba(180, 0, 0, 0.7);
+        }
+        
+        .option input {
+            margin-right: 15px;
+            transform: scale(1.3);
+        }
+        
+        .progress-container {
+            margin: 30px 0;
+            background: rgba(0, 0, 0, 0.3);
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff8c00, #ffcc00);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .result-container {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+        }
+        
+        .score {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #ffcc00;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.7);
+            margin: 20px 0;
+        }
+        
+        .score-text {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+        
+        .confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .file-name {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #4a9bff;
+        }
+        
+        .instructions {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .instructions h3 {
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .instructions code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-area {
+                padding: 20px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 16px;
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-question-circle"></i> MCQ Quiz Generator</h1>
+        
+        <!-- Upload Section -->
+        <div id="uploadSection" class="section active">
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> How to Use:</h3>
+                <ul>
+                    <li>Prepare a CSV file with your multiple-choice questions</li>
+                    <li>Each row should contain: <code>Question, Option1, Option2, Option3, Option4, CorrectAnswer</code></li>
+                    <li>Example: <code>"What is 2+2?", "3", "4", "5", "6", "4"</code></li>
+                    <li>Correct answer should match one of the options exactly</li>
+                    <li>Upload your CSV file to start the quiz</li>
+                </ul>
+            </div>
+            
+            <div class="upload-area" id="dropArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h2>Upload Your MCQ CSV File</h2>
+                <p>Drag & drop your file here or click to browse</p>
+                <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                <button class="btn" id="browseBtn"><i class="fas fa-folder-open"></i> Browse Files</button>
+                <div id="fileName" class="file-name"></div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="btn" id="startBtn" disabled>Start Quiz</button>
+            </div>
+        </div>
+        
+        <!-- Quiz Section -->
+        <div id="quizSection" class="section">
+            <div class="quiz-info">
+                <div id="roundInfo">Round 1 of 3</div>
+                <div id="progressText">Question 1 of 5</div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <div id="questionContainer">
+                <!-- Questions will be dynamically inserted here -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="btn" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+                <button class="btn" id="submitBtn" style="display: none;">Submit Round</button>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div id="resultsSection" class="section">
+            <div class="result-container">
+                <h2>Quiz Completed!</h2>
+                <div class="score" id="finalScore">0</div>
+                <div class="score-text" id="scoreText">Well done!</div>
+                <div id="resultDetails"></div>
+                <button class="btn" id="restartBtn"><i class="fas fa-redo"></i> Take Another Quiz</button>
+                <button class="btn btn-secondary" id="reviewBtn"><i class="fas fa-list"></i> Review Answers</button>
+            </div>
+        </div>
+    </div>
+    
+    <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+    
+    <script>
+        // Global variables
+        let questions = [];
+        let currentRound = 0;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let score = 0;
+        let rounds = [];
+        const QUESTIONS_PER_ROUND = 5;
+        
+        // DOM Elements
+        const uploadSection = document.getElementById('uploadSection');
+        const quizSection = document.getElementById('quizSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const csvFileInput = document.getElementById('csvFile');
+        const browseBtn = document.getElementById('browseBtn');
+        const startBtn = document.getElementById('startBtn');
+        const dropArea = document.getElementById('dropArea');
+        const fileName = document.getElementById('fileName');
+        const questionContainer = document.getElementById('questionContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const roundInfo = document.getElementById('roundInfo');
+        const progressText = document.getElementById('progressText');
+        const progressBar = document.getElementById('progressBar');
+        const finalScore = document.getElementById('finalScore');
+        const scoreText = document.getElementById('scoreText');
+        const resultDetails = document.getElementById('resultDetails');
+        const restartBtn = document.getElementById('restartBtn');
+        const reviewBtn = document.getElementById('reviewBtn');
+        const confettiCanvas = document.getElementById('confettiCanvas');
+        
+        // Event Listeners
+        browseBtn.addEventListener('click', () => csvFileInput.click());
+        csvFileInput.addEventListener('change', handleFileSelect);
+        startBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', nextQuestion);
+        prevBtn.addEventListener('click', prevQuestion);
+        submitBtn.addEventListener('click', submitRound);
+        restartBtn.addEventListener('click', restartQuiz);
+        reviewBtn.addEventListener('click', reviewAnswers);
+        
+        // Drag and drop functionality
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#ffcc00';
+            dropArea.style.backgroundColor = 'rgba(25, 40, 100, 0.5)';
+        });
+        
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.style.borderColor = '#4a9bff';
+            dropArea.style.backgroundColor = 'rgba(25, 40, 100, 0.3)';
+        });
+        
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#4a9bff';
+            dropArea.style.backgroundColor = 'rgba(25, 40, 100, 0.3)';
+            
+            if (e.dataTransfer.files.length) {
+                csvFileInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+        
+        // Handle file selection
+        function handleFileSelect() {
+            const file = csvFileInput.files[0];
+            if (!file) return;
+            
+            fileName.textContent = `Selected file: ${file.name}`;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    parseCSV(e.target.result);
+                    startBtn.disabled = false;
+                } catch (error) {
+                    alert(`Error parsing CSV: ${error.message}`);
+                    startBtn.disabled = true;
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Parse CSV data
+        function parseCSV(csvData) {
+            questions = [];
+            const lines = csvData.split('\n');
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                // Simple CSV parsing (assuming no commas in question/options)
+                const parts = line.split(',');
+                if (parts.length < 6) {
+                    throw new Error(`Invalid format on line ${i+1}. Each row must have at least 6 values.`);
+                }
+                
+                const question = {
+                    text: parts[0].trim(),
+                    options: [
+                        parts[1].trim(),
+                        parts[2].trim(),
+                        parts[3].trim(),
+                        parts[4].trim()
+                    ],
+                    correctAnswer: parts[5].trim()
+                };
+                
+                questions.push(question);
+            }
+            
+            if (questions.length === 0) {
+                throw new Error('No valid questions found in the CSV file.');
+            }
+            
+            // Split questions into rounds
+            rounds = [];
+            for (let i = 0; i < questions.length; i += QUESTIONS_PER_ROUND) {
+                rounds.push(questions.slice(i, i + QUESTIONS_PER_ROUND));
+            }
+        }
+        
+        // Start the quiz
+        function startQuiz() {
+            if (questions.length === 0) {
+                alert('Please upload a valid CSV file first.');
+                return;
+            }
+            
+            uploadSection.classList.remove('active');
+            quizSection.classList.add('active');
+            
+            currentRound = 0;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            score = 0;
+            
+            // Initialize user answers array
+            for (let i = 0; i < questions.length; i++) {
+                userAnswers.push(null);
+            }
+            
+            loadRound(currentRound);
+        }
+        
+        // Load a round of questions
+        function loadRound(roundIndex) {
+            if (roundIndex >= rounds.length) {
+                showResults();
+                return;
+            }
+            
+            const roundQuestions = rounds[roundIndex];
+            roundInfo.textContent = `Round ${roundIndex + 1} of ${rounds.length}`;
+            
+            currentQuestionIndex = 0;
+            loadQuestion(roundIndex, currentQuestionIndex);
+        }
+        
+        // Load a specific question
+        function loadQuestion(roundIndex, questionIndex) {
+            const roundQuestions = rounds[roundIndex];
+            const question = roundQuestions[questionIndex];
+            const globalIndex = (roundIndex * QUESTIONS_PER_ROUND) + questionIndex;
+            
+            progressText.textContent = `Question ${questionIndex + 1} of ${roundQuestions.length}`;
+            progressBar.style.width = `${((questionIndex + 1) / roundQuestions.length) * 100}%`;
+            
+            // Enable/disable navigation buttons
+            prevBtn.disabled = questionIndex === 0;
+            nextBtn.disabled = questionIndex === roundQuestions.length - 1;
+            submitBtn.style.display = questionIndex === roundQuestions.length - 1 ? 'inline-block' : 'none';
+            
+            // Build question HTML
+            let optionsHTML = '';
+            for (let i = 0; i < question.options.length; i++) {
+                const option = question.options[i];
+                const isSelected = userAnswers[globalIndex] === option;
+                
+                optionsHTML += `
+                    <div class="option ${isSelected ? 'selected' : ''}" data-option="${option}">
+                        <input type="radio" name="q${globalIndex}" value="${option}" 
+                               id="q${globalIndex}_opt${i}" ${isSelected ? 'checked' : ''}>
+                        <label for="q${globalIndex}_opt${i}">${option}</label>
+                    </div>
+                `;
+            }
+            
+            questionContainer.innerHTML = `
+                <div class="question-container">
+                    <div class="question-number">Question ${globalIndex + 1}</div>
+                    <div class="question-text">${question.text}</div>
+                    <div class="options-container">${optionsHTML}</div>
+                </div>
+            `;
+            
+            // Add event listeners to options
+            const optionElements = questionContainer.querySelectorAll('.option');
+            optionElements.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove selected class from all options
+                    optionElements.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked option
+                    option.classList.add('selected');
+                    
+                    // Check the radio input
+                    const radio = option.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    
+                    // Save user's answer
+                    userAnswers[globalIndex] = radio.value;
+                });
+            });
+        }
+        
+        // Go to next question
+        function nextQuestion() {
+            const roundQuestions = rounds[currentRound];
+            if (currentQuestionIndex < roundQuestions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion(currentRound, currentQuestionIndex);
+            }
+        }
+        
+        // Go to previous question
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion(currentRound, currentQuestionIndex);
+            }
+        }
+        
+        // Submit the current round and move to next
+        function submitRound() {
+            currentRound++;
+            loadRound(currentRound);
+        }
+        
+        // Show final results
+        function showResults() {
+            // Calculate score
+            score = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (userAnswers[i] === questions[i].correctAnswer) {
+                    score++;
+                }
+            }
+            
+            // Update UI
+            quizSection.classList.remove('active');
+            resultsSection.classList.add('active');
+            
+            finalScore.textContent = score;
+            scoreText.textContent = getScoreText(score, questions.length);
+            
+            resultDetails.innerHTML = `
+                <p>You answered ${score} out of ${questions.length} questions correctly.</p>
+                <p>That's ${Math.round((score / questions.length) * 100)}% correct!</p>
+            `;
+            
+            // Trigger confetti
+            triggerConfetti();
+        }
+        
+        // Get score feedback text
+        function getScoreText(score, total) {
+            const percentage = (score / total) * 100;
+            
+            if (percentage >= 90) return "Outstanding! You're a quiz master!";
+            if (percentage >= 75) return "Excellent work! You know your stuff!";
+            if (percentage >= 60) return "Good job! Solid performance!";
+            if (percentage >= 50) return "Not bad! Keep learning!";
+            return "Keep studying! You'll do better next time!";
+        }
+        
+        // Restart quiz
+        function restartQuiz() {
+            resultsSection.classList.remove('active');
+            uploadSection.classList.add('active');
+            
+            // Reset file input
+            csvFileInput.value = '';
+            fileName.textContent = '';
+            startBtn.disabled = true;
+        }
+        
+        // Review answers
+        function reviewAnswers() {
+            let reviewHTML = '<div class="instructions" style="text-align: left; margin-top: 30px;"><h3>Review Your Answers:</h3>';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const q = questions[i];
+                const userAnswer = userAnswers[i];
+                const isCorrect = userAnswer === q.correctAnswer;
+                
+                reviewHTML += `
+                    <div class="question-container" style="margin: 15px 0;">
+                        <div class="question-number">Question ${i + 1}: ${isCorrect ? '✅ Correct' : '❌ Incorrect'}</div>
+                        <div class="question-text">${q.text}</div>
+                        <div style="margin: 10px 0;">
+                            <strong>Your answer:</strong> 
+                            <span style="color: ${isCorrect ? '#4caf50' : '#f44336'}">${userAnswer || 'No answer'}</span>
+                        </div>
+                        <div style="margin: 5px 0;">
+                            <strong>Correct answer:</strong> 
+                            <span style="color: #4caf50">${q.correctAnswer}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            reviewHTML += '</div>';
+            resultDetails.innerHTML = reviewHTML;
+            
+            // Scroll to review section
+            resultDetails.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Confetti effect
+        function triggerConfetti() {
+            const ctx = confettiCanvas.getContext('2d');
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+            
+            const confettiColors = ['#ffcc00', '#ff8c00', '#4a9bff', '#1e90ff', '#ff4d4d'];
+            
+            // Create confetti pieces
+            const confettiPieces = [];
+            for (let i = 0; i < 150; i++) {
+                confettiPieces.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: -Math.random() * confettiCanvas.height,
+                    size: Math.random() * 10 + 5,
+                    speed: Math.random() * 3 + 2,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 5 - 2.5,
+                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)]
+                });
+            }
+            
+            // Animation function
+            function animateConfetti() {
+                ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+                
+                let activePieces = 0;
+                
+                confettiPieces.forEach(piece => {
+                    piece.y += piece.speed;
+                    piece.rotation += piece.rotationSpeed;
+                    
+                    if (piece.y < confettiCanvas.height) {
+                        activePieces++;
+                        
+                        ctx.save();
+                        ctx.translate(piece.x, piece.y);
+                        ctx.rotate(piece.rotation * Math.PI / 180);
+                        
+                        ctx.fillStyle = piece.color;
+                        ctx.fillRect(-piece.size/2, -piece.size/2, piece.size, piece.size);
+                        
+                        ctx.restore();
+                    }
+                });
+                
+                if (activePieces > 0) {
+                    requestAnimationFrame(animateConfetti);
+                }
+            }
+            
+            animateConfetti();
+        }
+        
+        // Sample CSV download
+        window.onload = function() {
+            const sampleCSV = `What is 2+2?,3,4,5,6,4
+What is the capital of France?,London,Berlin,Paris,Madrid,Paris
+Which planet is known as the Red Planet?,Venus,Mars,Jupiter,Saturn,Mars
+What gas do plants absorb from the atmosphere?,Oxygen,Nitrogen,Carbon Dioxide,Hydrogen,Carbon Dioxide
+Who wrote Romeo and Juliet?,Charles Dickens,William Shakespeare,J.K. Rowling,Mark Twain,William Shakespeare
+What is the largest mammal?,Elephant,Blue Whale,Giraffe,Rhinoceros,Blue Whale
+Which element has the chemical symbol 'O'?,Gold,Oxygen,Silver,Osmium,Oxygen
+How many continents are there?,5,6,7,8,7
+What is the hardest natural substance on Earth?,Gold,Iron,Diamond,Platinum,Diamond
+Which country is home to the kangaroo?,Brazil,Canada,Australia,India,Australia`;
+            
+            // Create sample download link
+            const instructions = document.querySelector('.instructions');
+            const sampleLink = document.createElement('a');
+            sampleLink.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(sampleCSV);
+            sampleLink.download = 'sample_quiz.csv';
+            sampleLink.className = 'btn btn-secondary';
+            sampleLink.style.marginTop = '10px';
+            sampleLink.innerHTML = '<i class="fas fa-download"></i> Download Sample CSV';
+            instructions.appendChild(sampleLink);
+        };
+    </script>
+</body>
+</html>
