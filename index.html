@@ -14,32 +14,100 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
-            color: white;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            color: #333;
             min-height: 100vh;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: background 0.5s, color 0.5s;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: white;
         }
         
         .container {
             max-width: 800px;
             width: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             margin: 20px 0;
+            transition: background 0.5s, box-shadow 0.5s;
+        }
+
+        body.dark-mode .container {
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         
         h1 {
             text-align: center;
             font-size: 2.5rem;
             margin-bottom: 20px;
+            color: #1a2a6c;
+            text-shadow: none;
+        }
+
+        body.dark-mode h1 {
             color: #ffcc00;
             text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+
+        .theme-switcher {
+            position: relative;
+        }
+
+        #theme-toggle {
+            display: none;
+        }
+
+        .theme-label {
+            display: block;
+            width: 50px;
+            height: 25px;
+            background-color: #4a4a4a;
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .theme-label .fa-moon {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            color: #f1c40f;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .theme-label .fa-sun {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: #f39c12;
+            opacity: 0;
+            transform: scale(0);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        #theme-toggle:checked + .theme-label {
+            background-color: #dcdcdc;
+        }
+
+        #theme-toggle:checked + .theme-label .fa-moon {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        #theme-toggle:checked + .theme-label .fa-sun {
+            opacity: 1;
+            transform: scale(1);
         }
         
         .section {
@@ -57,25 +125,39 @@
         }
         
         .upload-area {
-            border: 3px dashed #4a9bff;
+            border: 3px dashed #1e90ff;
             border-radius: 10px;
             padding: 40px;
             text-align: center;
             margin: 30px 0;
             cursor: pointer;
             transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .upload-area {
+            border-color: #4a9bff;
             background: rgba(25, 40, 100, 0.3);
         }
         
         .upload-area:hover {
+            background: rgba(0, 0, 0, 0.1);
+            border-color: #ff8c00;
+        }
+
+        body.dark-mode .upload-area:hover {
             background: rgba(25, 40, 100, 0.5);
             border-color: #ffcc00;
         }
         
         .upload-area i {
             font-size: 60px;
-            color: #4a9bff;
+            color: #1e90ff;
             margin-bottom: 20px;
+        }
+
+        body.dark-mode .upload-area i {
+            color: #4a9bff;
         }
         
         .upload-area h2 {
@@ -84,6 +166,10 @@
         
         .upload-area p {
             margin-bottom: 20px;
+            color: #555;
+        }
+
+        body.dark-mode .upload-area p {
             color: #ccc;
         }
         
@@ -99,13 +185,21 @@
             transition: all 0.3s;
             margin: 10px 5px;
             display: inline-block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .btn {
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
             background: linear-gradient(45deg, #ffcc00, #ff8c00);
+        }
+
+        body.dark-mode .btn:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
         
         .btn:active {
@@ -131,22 +225,35 @@
             text-align: center;
             margin: 20px 0;
             font-size: 1.1rem;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.05);
             padding: 15px;
             border-radius: 10px;
         }
+
+        body.dark-mode .quiz-info {
+            background: rgba(0, 0, 0, 0.3);
+        }
         
         .question-container {
-            background: rgba(30, 30, 60, 0.7);
+            background: rgba(0, 0, 0, 0.05);
             border-radius: 10px;
             padding: 20px;
             margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .question-container {
+            background: rgba(30, 30, 60, 0.7);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .question-number {
             font-size: 1.3rem;
             margin-bottom: 15px;
+            color: #1a2a6c;
+        }
+
+        body.dark-mode .question-number {
             color: #ffcc00;
         }
         
@@ -163,21 +270,35 @@
         }
         
         .option {
-            background: rgba(50, 50, 80, 0.7);
+            background: rgba(0, 0, 0, 0.05);
             padding: 15px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
+            border-left: 5px solid transparent;
+        }
+
+        body.dark-mode .option {
+            background: rgba(50, 50, 80, 0.7);
         }
         
         .option:hover {
-            background: rgba(70, 70, 100, 0.9);
+            background: rgba(0, 0, 0, 0.1);
             transform: translateX(5px);
+        }
+
+        body.dark-mode .option:hover {
+            background: rgba(70, 70, 100, 0.9);
         }
         
         .option.selected {
+            background: rgba(173, 216, 230, 0.9);
+            border-left: 5px solid #1e90ff;
+        }
+
+        body.dark-mode .option.selected {
             background: rgba(25, 100, 150, 0.9);
             border-left: 5px solid #ffcc00;
         }
@@ -197,32 +318,49 @@
         
         .progress-container {
             margin: 30px 0;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.1);
             height: 20px;
             border-radius: 10px;
             overflow: hidden;
         }
+
+        body.dark-mode .progress-container {
+            background: rgba(0, 0, 0, 0.3);
+        }
         
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #ff8c00, #ffcc00);
+            background: linear-gradient(90deg, #1e90ff, #4a9bff);
             width: 0%;
             transition: width 0.5s ease;
+        }
+
+        body.dark-mode .progress-bar {
+            background: linear-gradient(90deg, #ff8c00, #ffcc00);
         }
         
         .result-container {
             text-align: center;
             padding: 30px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.05);
             border-radius: 15px;
+        }
+
+        body.dark-mode .result-container {
+            background: rgba(0, 0, 0, 0.3);
         }
         
         .score {
             font-size: 5rem;
             font-weight: bold;
+            color: #1a2a6c;
+            text-shadow: 0 0 20px rgba(26, 42, 108, 0.2);
+            margin: 20px 0;
+        }
+
+        body.dark-mode .score {
             color: #ffcc00;
             text-shadow: 0 0 20px rgba(255, 204, 0, 0.7);
-            margin: 20px 0;
         }
         
         .score-text {
@@ -243,21 +381,33 @@
         .file-name {
             margin-top: 10px;
             font-size: 0.9rem;
+            color: #1e90ff;
+        }
+
+        body.dark-mode .file-name {
             color: #4a9bff;
         }
         
         .instructions {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.05);
             padding: 20px;
             border-radius: 10px;
             margin: 20px 0;
             font-size: 0.95rem;
             line-height: 1.6;
         }
+
+        body.dark-mode .instructions {
+            background: rgba(0, 0, 0, 0.3);
+        }
         
         .instructions h3 {
-            color: #ffcc00;
+            color: #1a2a6c;
             margin-bottom: 10px;
+        }
+
+        body.dark-mode .instructions h3 {
+            color: #ffcc00;
         }
         
         .instructions ul {
@@ -270,10 +420,16 @@
         }
         
         .instructions code {
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.1);
             padding: 2px 6px;
             border-radius: 4px;
             font-family: monospace;
+            color: #d6336c;
+        }
+
+        body.dark-mode .instructions code {
+            background: rgba(0, 0, 0, 0.5);
+            color: #ff8c94;
         }
         
         @media (max-width: 600px) {
@@ -300,7 +456,16 @@
 </head>
 <body>
     <div class="container">
-        <h1><i class="fas fa-question-circle"></i> MCQ Quiz Generator</h1>
+        <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
+            <h1><i class="fas fa-question-circle"></i> MCQ Quiz Generator</h1>
+            <div class="theme-switcher">
+                <input type="checkbox" id="theme-toggle">
+                <label for="theme-toggle" class="theme-label">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                </label>
+            </div>
+        </div>
         
         <!-- Upload Section -->
         <div id="uploadSection" class="section active">
@@ -398,6 +563,7 @@
         const restartBtn = document.getElementById('restartBtn');
         const reviewBtn = document.getElementById('reviewBtn');
         const confettiCanvas = document.getElementById('confettiCanvas');
+        const themeToggle = document.getElementById('theme-toggle');
         
         // Event Listeners
         browseBtn.addEventListener('click', () => csvFileInput.click());
@@ -408,7 +574,23 @@
         submitBtn.addEventListener('click', submitRound);
         restartBtn.addEventListener('click', restartQuiz);
         reviewBtn.addEventListener('click', reviewAnswers);
+        themeToggle.addEventListener('change', toggleTheme);
         
+        // Theme switcher functionality
+        function setTheme(isDarkMode) {
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            themeToggle.checked = isDarkMode;
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        function toggleTheme() {
+            setTheme(themeToggle.checked);
+        }
+
+        // Check for saved theme preference
+        const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+        setTheme(savedDarkMode);
+
         // Drag and drop functionality
         dropArea.addEventListener('dragover', (e) => {
             e.preventDefault();
