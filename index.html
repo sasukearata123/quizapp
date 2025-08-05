@@ -540,6 +540,7 @@
         let score = 0;
         let rounds = [];
         const QUESTIONS_PER_ROUND = 5;
+        let halfwayPopupShown = false;
         
         // DOM Elements
         const uploadSection = document.getElementById('uploadSection');
@@ -688,6 +689,7 @@
             currentQuestionIndex = 0;
             userAnswers = [];
             score = 0;
+            halfwayPopupShown = false;
             
             // Initialize user answers array
             for (let i = 0; i < questions.length; i++) {
@@ -716,6 +718,25 @@
             const roundQuestions = rounds[roundIndex];
             const question = roundQuestions[questionIndex];
             const globalIndex = (roundIndex * QUESTIONS_PER_ROUND) + questionIndex;
+
+            // Check for perfect score at halfway point
+            const halfwayPoint = Math.ceil(questions.length / 2);
+            if (!halfwayPopupShown && globalIndex === halfwayPoint) {
+                let scoreSoFar = 0;
+                for (let i = 0; i < halfwayPoint; i++) {
+                    if (userAnswers[i] === questions[i].correctAnswer) {
+                        scoreSoFar++;
+                    }
+                }
+
+                if (scoreSoFar === halfwayPoint) {
+                    // Use a timeout to not interrupt the question loading
+                    setTimeout(() => {
+                        alert("You are an excellent quizzer!");
+                    }, 100);
+                }
+                halfwayPopupShown = true; // Ensure this check only runs once
+            }
             
             progressText.textContent = `Question ${questionIndex + 1} of ${roundQuestions.length}`;
             progressBar.style.width = `${((questionIndex + 1) / roundQuestions.length) * 100}%`;
